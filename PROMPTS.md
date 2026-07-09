@@ -64,3 +64,20 @@ Opción A — Invalidación de tokens por cambio de contraseña: si un usuario c
 hagamos esta parte ahora
 
 El resultado de la IA fue implementar correctamente todos los datos para hacer la autorizacioon y permisos correctos, haciendo priuebas en vbruno con la misma IA me ayudo bastante a comprender el proceso
+
+Prompt:
+2.4 Docker  
+Dockerfile funcional para la API.  
+docker-compose.yml que levante la API junto con su base de datos.  
+Se debera levantar el proyecto con (docker-compose up).  
+2.5 CI/CD con GitHub Actions  
+Realizar un pipeline de CI/CD de GitHub Actions, como mínimo:  
+
+Se ejecute automáticamente en cada push a la rama principal.  
+Compile/construya el proyecto.  
+Ejecute las pruebas, si existen.  
+Falle si se detecta una vulnerabilidad crítica o un secreto expuesto  
+
+falta esto
+
+La IA genero todo el dockerfile como ayuda para probar desde workflows, pruebas y errores me salieron pero con la ayuda de la misma pude terminar!
