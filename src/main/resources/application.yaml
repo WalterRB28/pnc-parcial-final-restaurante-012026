@@ -1,3 +1,11 @@
 spring:
-  application:
-    name: pnc-parcial-final-restaurante
+  datasource:
+    url: jdbc:postgresql://localhost:5432/restaurante
+    username: postgres
+    password: test1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
