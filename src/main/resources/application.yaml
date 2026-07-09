@@ -9,3 +9,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+jwt:
+  secret: "hellothisismrpresidenttrumpimheretodaytotelyouaboutsquarespace"  # reemplaza por una clave segura en prod
+  access-token-expiration-ms: 900000            # 15 minutos = 900_000 ms
+  refresh-token-expiration-ms: 604800000

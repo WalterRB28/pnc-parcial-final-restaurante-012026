@@ -33,3 +33,17 @@ Process finished with exit code 1
 
 La IA me ayudo a debuggear el error, fue porque no tenia activo pgAdmin
 
+Prompt:
+2.1 Autenticación  
+Login con usuario y contraseña, que devuelva un Access Token (JWT) y un Refresh Token.  
+El Access Token debe expirar en un tiempo corto (por ejemplo, 15 minutos) y el Refresh Token en un tiempo mayor (por ejemplo, 7 días).  
+Endpoint para renovar el Access Token usando el Refresh Token.  
+
+ahora intentemos hacer esto, ya no tengo errores a la jora de levantar el proyecto
+
+La IA genero toda la base para la autenticacion para entrar al servidor, lo unico que cambie fue el uso de settere y getters pues no ocupo la tool de Lombok
+
+Prompt:
+Como hago para realizar las siguientes pruebas?
+
+La IA me ayudo a probar con los endpoints y tests de crar cosas por medio de Bruno, todo funciona correcto
