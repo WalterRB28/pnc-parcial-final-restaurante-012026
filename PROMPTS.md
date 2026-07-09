@@ -47,3 +47,20 @@ Prompt:
 Como hago para realizar las siguientes pruebas?
 
 La IA me ayudo a probar con los endpoints y tests de crar cosas por medio de Bruno, todo funciona correcto
+
+Prompt:
+2.2 Roles y Autorización  
+Mínimo estos tres roles, con permisos claramente diferenciados:  
+
+Rol	Permisos  
+Administrador	Acceso total: gestiona restaurantes, mesas, usuarios y pedidos de todas las sucursales  
+Encargado de turno	Gestiona pedidos y mesas, pero únicamente de la sucursal a la que pertenece  
+Cliente	Solo puede crear, ver y cancelar sus propios pedidos  
+2.3 Regla de negocio no trivial (obligatoria)  
+Además de la autorización básica por rol, deberan implementar una de estas reglas (o me propongan una equivalente):  
+
+Opción A — Invalidación de tokens por cambio de contraseña: si un usuario cambia su contraseña, todos los tokens emitidos previamente deben quedar inválidos de inmediato, aunque no hayan expirado. Quiero que me expliquen y justifiquen el mecanismo elegido (versión de token, blacklist, etc.).  
+
+hagamos esta parte ahora
+
+El resultado de la IA fue implementar correctamente todos los datos para hacer la autorizacioon y permisos correctos, haciendo priuebas en vbruno con la misma IA me ayudo bastante a comprender el proceso

@@ -4,6 +4,7 @@ import com.uca.pncparcialfinalrestaurante.entity.Producto;
 import com.uca.pncparcialfinalrestaurante.repository.ProductoRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class ProductoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> create(@Valid @RequestBody Producto p) {
         Producto saved = repo.save(p);
         return ResponseEntity.ok(saved);

@@ -6,14 +6,16 @@ import com.uca.pncparcialfinalrestaurante.entity.*;
 import com.uca.pncparcialfinalrestaurante.entity.enums.EstadoPedido;
 import com.uca.pncparcialfinalrestaurante.repository.*;
 import com.uca.pncparcialfinalrestaurante.service.PedidoService;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -90,7 +92,40 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Pedido cancelarPedido(Long id) {
         Pedido p = obtenerPorId(id);
+
+        // Validar autorización: CLIENTE solo puede cancelar su propio pedido
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"))) {
+            String username = auth.getName();
+            Usuario usuario = usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            if (!Objects.equals(p.getCliente().getId(), usuario.getId())) {
+                throw new AccessDeniedException("No autorizado para cancelar pedido de otro cliente");
+            }
+        }
+
         p.setEstado(EstadoPedido.CANCELADO);
+        return pedidoRepository.save(p);
+    }
+
+    @Override
+    public Pedido confirmarPedido(Long id) {
+        Pedido p = obtenerPorId(id);
+
+        // Validar autorización: ENCARGADO solo puede confirmar pedidos de su sucursal
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ENCARGADO"))) {
+            String username = auth.getName();
+            Usuario usuario = usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            Long pedidoBranchId = p.getMesa().getSucursal().getId();
+            Long userBranchId = usuario.getSucursal().getId();
+            if (!Objects.equals(pedidoBranchId, userBranchId)) {
+                throw new AccessDeniedException("No autorizado: pedido pertenece a otra sucursal");
+            }
+        }
+
+        p.setEstado(EstadoPedido.CONFIRMADO);
         return pedidoRepository.save(p);
     }
 }

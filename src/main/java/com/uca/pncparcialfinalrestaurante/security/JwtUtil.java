@@ -29,7 +29,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(String username, Long userId, Set<Role> roles) {
+    public String generateAccessToken(String username, Long userId, Set<Role> roles, Integer tokenVersion) {
         long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
         Date expiry = new Date(now + accessTokenExpirationMs);
@@ -37,6 +37,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles.stream().map(Role::name).collect(Collectors.toList()));
         claims.put("userId", userId);
+        claims.put("tokenVersion", tokenVersion);  // NUEVO
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -64,6 +65,14 @@ public class JwtUtil {
         return parseClaims(token).getBody().getSubject();
     }
 
+    public Long getUserIdFromAccessToken(String token) {
+        return parseClaims(token).getBody().get("userId", Long.class);
+    }
+
+    public Integer getTokenVersionFromAccessToken(String token) {
+        return parseClaims(token).getBody().get("tokenVersion", Integer.class);
+    }
+
     @SuppressWarnings("unchecked")
     public List<String> getRolesFromAccessToken(String token) {
         Object roles = parseClaims(token).getBody().get("roles");
@@ -73,7 +82,6 @@ public class JwtUtil {
         return Collections.emptyList();
     }
 
-    // Refresh token será un UUID aleatorio; no firmado con JWT aquí
     public String generateRefreshTokenString() {
         return UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
     }

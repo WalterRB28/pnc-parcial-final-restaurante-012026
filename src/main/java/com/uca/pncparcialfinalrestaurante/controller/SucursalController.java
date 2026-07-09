@@ -4,6 +4,7 @@ import com.uca.pncparcialfinalrestaurante.entity.Sucursal;
 import com.uca.pncparcialfinalrestaurante.repository.SucursalRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class SucursalController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Sucursal> create(@Valid @RequestBody Sucursal s) {
         Sucursal saved = repo.save(s);
         return ResponseEntity.ok(saved);
@@ -35,6 +37,7 @@ public class SucursalController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         repo.deleteById(id);
         return ResponseEntity.noContent().build();

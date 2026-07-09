@@ -4,6 +4,7 @@ import com.uca.pncparcialfinalrestaurante.dto.*;
 import com.uca.pncparcialfinalrestaurante.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,5 +33,13 @@ public class AuthController {
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest request) {
         AuthResponse resp = service.refresh(request);
         return ResponseEntity.ok(resp);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request,
+            Authentication auth) {
+        service.changePassword(request, auth.getName());
+        return ResponseEntity.ok().build();
     }
 }

@@ -49,7 +49,7 @@ public class AuthServiceImpl implements com.uca.pncparcialfinalrestaurante.servi
         );
 
         Usuario u = usuarioRepository.findByUsername(request.getUsername()).orElseThrow();
-        String accessToken = jwtUtil.generateAccessToken(u.getUsername(), u.getId(), u.getRoles());
+        String accessToken = jwtUtil.generateAccessToken(u.getUsername(), u.getId(), u.getRoles(), u.getTokenVersion());
 
         // generate refresh token string and store hashed
         String refreshTokenPlain = jwtUtil.generateRefreshTokenString();
@@ -96,7 +96,7 @@ public class AuthServiceImpl implements com.uca.pncparcialfinalrestaurante.servi
                 .build();
         refreshTokenRepository.save(newRt);
 
-        String newAccess = jwtUtil.generateAccessToken(u.getUsername(), u.getId(), u.getRoles());
+        String newAccess = jwtUtil.generateAccessToken(u.getUsername(), u.getId(), u.getRoles(), u.getTokenVersion());
 
         return new AuthResponse(newAccess, newRefreshPlain, jwtUtil.getAccessTokenExpirationMs(), refreshTokenExpirationMs);
     }
@@ -116,5 +116,27 @@ public class AuthServiceImpl implements com.uca.pncparcialfinalrestaurante.servi
             u.setSucursal(s);
         }
         usuarioRepository.save(u);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request, String username) {
+        Usuario u = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // verificar contraseña actual
+        if (!passwordEncoder.matches(request.getOldPassword(), u.getPassword())) {
+            throw new IllegalArgumentException("Contraseña actual incorrecta");
+        }
+
+        // actualizar contraseña
+        u.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        // INCREMENTAR tokenVersion para invalidar todos los tokens previos
+        u.setTokenVersion(u.getTokenVersion() + 1);
+
+        usuarioRepository.save(u);
+
+        // Revocar todos los refresh tokens previos
+        refreshTokenRepository.deleteAll(refreshTokenRepository.findByUsuarioId(u.getId()));
     }
 }

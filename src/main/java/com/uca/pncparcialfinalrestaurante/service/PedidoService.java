@@ -12,4 +12,5 @@ public interface PedidoService {
     List<Pedido> obtenerPorSucursal(Long sucursalId);
     List<Pedido> obtenerPorCliente(Long clienteId);
     Pedido cancelarPedido(Long id);
+    Pedido confirmarPedido(Long id);
 }

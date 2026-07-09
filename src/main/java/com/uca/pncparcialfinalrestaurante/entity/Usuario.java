@@ -21,7 +21,6 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String username;
 
-    // En la Parte 1 guardamos la contraseña en campo (más adelante usar BCrypt)
     @Column(nullable = false)
     private String password;
 
@@ -30,8 +29,12 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    // Si el usuario es ENCARGADO puede pertenecer a una sucursal
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sucursal_id")
     private Sucursal sucursal;
+
+    // NUEVO: para invalidar tokens al cambiar contraseña
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer tokenVersion = 0;
 }
