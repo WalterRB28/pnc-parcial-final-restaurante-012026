@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: restaurante-db
+    environment:
+      POSTGRES_DB: restaurante
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_password_secure_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d restaurante"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurante-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/restaurante
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: app_password_secure_123
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "false"
+      JWT_SECRET: "CHANGEME_very_long_random_secret_key_for_docker_production_use_env_var"
+      JWT_ACCESS_TOKEN_EXPIRATION_MS: "900000"
+      JWT_REFRESH_TOKEN_EXPIRATION_MS: "604800000"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - restaurante-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  restaurante-network:
+    driver: bridge

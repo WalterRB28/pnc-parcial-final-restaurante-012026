@@ -1,16 +1,27 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/restaurante
-    username: postgres
-    password: test1234
-    driver-class-name: org.postgresql.Driver
+  application:
+    name: pnc-parcial-final-restaurante
 
+  profiles:
+    active: dev
+
+jwt:
+  secret: "CHANGEME_very_long_random_secret_key_for_dev"
+  access-token-expiration-ms: 900000
+  refresh-token-expiration-ms: 604800000
+
+---
+# Perfil: docker (Postgres)
+spring:
+  config:
+    activate:
+      on-profile: docker
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
 jwt:
-  secret: "hellothisismrpresidenttrumpimheretodaytotelyouaboutsquarespace"  # reemplaza por una clave segura en prod
-  access-token-expiration-ms: 900000            # 15 minutos = 900_000 ms
-  refresh-token-expiration-ms: 604800000
+  secret: "${JWT_SECRET:CHANGEME_very_long_random_secret_key_for_docker}"
+  access-token-expiration-ms: "${JWT_ACCESS_TOKEN_EXPIRATION_MS:900000}"
+  refresh-token-expiration-ms: "${JWT_REFRESH_TOKEN_EXPIRATION_MS:604800000}"
